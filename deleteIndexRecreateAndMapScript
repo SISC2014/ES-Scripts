@@ -1,0 +1,24 @@
+#!/bin/bash
+#curl -XDELETE 'http://localhost:9200/htcondor/'
+curl -XPUT 'http://localhost:9200/htcondor/'
+curl -XPUT 'http://localhost:9200/htcondor/mongoData/_mapping' -d '
+{
+	"mongoData" : {
+		"properties" : {
+			"JobCurrentStartDate" : { "type" : "date" },
+			"QDate" : { "type" : "date" },
+			"JobCurrentStartExecutingDate" : { "type" : "date" },
+			"LastJobLeaseRenewal" : { "type" : "date" },
+			"JobFinishedHookDone" : { "type" : "date" },
+			"LastMatchTime" : { "type" : "date" },
+			"EnteredCurrentStatus" : { "type" : "date" },
+			"CompletionDate" : { "type" : "date" },
+			"jobShadowStartTime" : { "type" : "date" },
+			"jobEndTime" : { "type" : "date" },
+			"jobTimeSHADOW" : { "type" : "integer" },
+			"lagTimeSecondsSHADOW" : { "type" : "integer" },
+			"lagTimeMinutesSHADOW" : { "type" : "integer" },
+			"lagTimeHoursSHADOW" : { "type" : "integer" }
+		}
+	}
+} '
