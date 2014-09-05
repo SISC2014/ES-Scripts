@@ -4,9 +4,9 @@ import json, ast
 from pymongo import MongoClient
 
 #convert from unicode string to int as well as from seconds to milliseconds
-def convertToIntMilliseconds(field, documentBSON):
+def convertToMilliseconds(field, documentBSON):
 	if field in documentBSON:
-		documentBSON[field] = int(documentBSON[field]) * 1000
+		documentBSON[field] = documentBSON[field] * 1000
 
 #convert from unicode string to int 
 def convertToInt(field, documentBSON):
@@ -30,63 +30,27 @@ numDocs = countDict["count"]
 for documentBSON in collection.find()[numDocs:]:
 	ast.literal_eval(json.dumps(documentBSON))
 
-	convertToIntMilliseconds("JobStartDate", documentBSON)
-	convertToIntMilliseconds("JobCurrentStartDate", documentBSON)
-	convertToIntMilliseconds("JobFinishedHookDone", documentBSON)
-	convertToIntMilliseconds("CompletionDate", documentBSON)
-	convertToIntMilliseconds("QDate", documentBSON)
-	convertToIntMilliseconds("JobCurrentStartExecutingDate", documentBSON)
-	convertToIntMilliseconds("LastJobLeaseRenewal", documentBSON)
-	convertToIntMilliseconds("EnteredCurrentStatus", documentBSON)
-	convertToIntMilliseconds("LastMatchTime", documentBSON) 
-	convertToInt("TotalSuspensions", documentBSON)
-	convertToInt("LastJobStatus", documentBSON)
-	convertToInt("BufferBlockSize", documentBSON)
-	convertToInt("OrigMaxHosts", documentBSON)
-	convertToInt("LastHoldReasonCode", documentBSON)
-	convertToInt("ExitStatus", documentBSON)
-	convertToInt("JobLeaseDuration", documentBSON)
-	convertToInt("JobUniverse", documentBSON)
-	convertToInt("RequestCpus", documentBSON)
-	convertToInt("ExitCode", documentBSON)
-	convertToInt("NumSystemHolds", documentBSON)
-	convertToInt("ResidentSetSize", documentBSON)
-	convertToInt("LastHoldReasonSubCode", documentBSON)
-	convertToInt("TransferInputSizeMB", documentBSON)
-	convertToInt("CoreSize", documentBSON)
-	convertToInt("NumSystemHolds", documentBSON)
-	convertToInt("ResidentSetSize", documentBSON)
-	convertToInt("LastHoldReasonSubCode", documentBSON)
-	convertToInt("TransferInputSizeMB", documentBSON)
-	convertToInt("CoreSize", documentBSON)
-	convertToInt("ImageSize", documentBSON)
-	convertToInt("ImageSize_RAW", documentBSON)
-	convertToInt("RemoteWallClockTime", documentBSON)
-	convertToInt("ClusterId", documentBSON)
-	convertToInt("ProcId", documentBSON)
-	convertToInt("LastSuspensionTime", documentBSON)
-	convertToInt("DiskUsage", documentBSON)
-	convertToInt("JobPrio", documentBSON)
-	convertToInt("JobRunCount", documentBSON)
-	convertToInt("BufferSize", documentBSON)
-	convertToInt("MaxHosts", documentBSON)
-	convertToInt("MinHosts", documentBSON)
-	convertToInt("JobStatus", documentBSON)
-	convertToInt("CumulativeSlotTime", documentBSON)
-	convertToInt("CommittedSlotTime", documentBSON)
-	convertToInt("BytesRecvd", documentBSON)
-	convertToInt("NumCkpts_RAW", documentBSON)
-	convertToString("_id", documentBSON)
+	convertToMilliseconds("JobStartDate", documentBSON)
+	convertToMilliseconds("JobCurrentStartDate", documentBSON)
+	convertToMilliseconds("JobFinishedHookDone", documentBSON)
+	convertToMilliseconds("CompletionDate", documentBSON)
+	convertToMilliseconds("QDate", documentBSON)
+	convertToMilliseconds("JobCurrentStartExecutingDate", documentBSON)
+	convertToMilliseconds("LastJobLeaseRenewal", documentBSON)
+	convertToMilliseconds("EnteredCurrentStatus", documentBSON)
+	convertToMilliseconds("LastMatchTime", documentBSON) 
 
 	if("QDate" in documentBSON and "JobCurrentStartExecutingDate" in documentBSON):
 		documentBSON["LatencyTimeSecondsINSERTED"] = (documentBSON["JobCurrentStartExecutingDate"] / 1000) - (documentBSON["QDate"] / 1000)
 		documentBSON["LatencyTimeMinutesINSERTED"] = ((documentBSON["JobCurrentStartExecutingDate"] / 1000) - (documentBSON["QDate"] / 1000)) / 60.0
 		documentBSON["LatencyTimeHoursINSERTED"] = ((documentBSON["JobCurrentStartExecutingDate"] / 1000) - (documentBSON["QDate"] / 1000)) / 3600.0
 
-#	for key, value in documentBSON.items():
-#		print key, value, type(value)
+	if("QDate" in documentBSON and "JobStartDate" in documentBSON):
+		documentBSON["queueTimeSecondsINSERTED"] = (documentBSON["JobStartDate"] / 1000) - (documentBSON["QDate"] / 1000)
+		documentBSON["queueTimeMinutesINSERTED"] = ((documentBSON["JobStartDate"] / 1000) - (documentBSON["QDate"] / 1000)) / 60.0
+		documentBSON["queueTimeHoursINSERTED"] = ((documentBSON["JobStartDate"] / 1000) - (documentBSON["QDate"] / 1000)) / 3600.0
+
 	res = es.index(index = "htcondor", doc_type = "mongoData", id = documentBSON["_id"], body = documentBSON)
-	print "inserted _id: " + documentBSON["_id"], numDocs + i;
 	fileOut.write("inserted _id: " + str(documentBSON["_id"]) + " index: " + str(numDocs + i) + " \n")		
 	i+=1;
 #	doc = vars(documentEntry)

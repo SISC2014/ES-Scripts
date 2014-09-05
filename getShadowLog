@@ -1,0 +1,1 @@
+/usr/bin/scp -i /home/scottscott/.ssh/id_rsa scottscott@login.osgconnect.net:/var/log/condor/ShadowLog /home/scottscott/scripts/ShadowLog
